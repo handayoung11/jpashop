@@ -1,0 +1,10 @@
+#intellij
+.idea
+HELP.md
+
+#gradle
+.gradle
+!gradle/wrapper/gradle-wrapper.jar
+
+#JAVA
+*.jar
