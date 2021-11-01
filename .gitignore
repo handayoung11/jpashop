@@ -5,6 +5,8 @@ HELP.md
 #gradle
 .gradle
 !gradle/wrapper/gradle-wrapper.jar
+build
 
 #JAVA
 *.jar
+.jpb
