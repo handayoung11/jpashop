@@ -15,9 +15,6 @@ public class MemberRepository {
     @PersistenceContext
     private EntityManager em;
 
-    @PersistenceUnit
-    private EntityManagerFactory emf;
-
     public void save(Member member) {
         em.persist(member);
     }
