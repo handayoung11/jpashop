@@ -1,6 +1,8 @@
 package jpabook.jpashop.domain;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -23,6 +25,7 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
+    @Setter(AccessLevel.NONE)
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "delivery_id")
     private Delivery delivery;
@@ -42,7 +45,7 @@ public class Order {
         orderItem.setOrder(this);
     }
 
-    public void setDelivery(Delivery delivery) {
+    public void confDelivery(Delivery delivery) {
         this.delivery = delivery;
         delivery.setOrder(this);
     }
