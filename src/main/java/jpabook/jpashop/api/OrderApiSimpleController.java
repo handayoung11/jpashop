@@ -6,6 +6,7 @@ import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.order.query.OrderQueryRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderApiSimpleController {
     private final OrderRepository orderRepository;
+    private final OrderQueryRepository orderQueryRepository;
 
     /**
      * ManyToOne, OneToOne
@@ -44,10 +46,15 @@ public class OrderApiSimpleController {
         return new SimpleOrdersResult(all);
     }
 
+    @GetMapping("/api/v4/simple-orders")
+    public SimpleOrdersResult ordersV4() {
+        return new SimpleOrdersResult(orderQueryRepository.findSimpleOrderQueryDTOList());
+    }
+
     @Data
     @AllArgsConstructor
-    static class SimpleOrdersResult {
-        List<SimpleOrderDTO> orders;
+    static class SimpleOrdersResult<T> {
+        List<T> orders;
     }
 
     @Data
