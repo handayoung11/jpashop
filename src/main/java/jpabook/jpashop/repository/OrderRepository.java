@@ -53,7 +53,7 @@ public class OrderRepository {
     public List<Order> findAllWithMemberAndDelivery() {
         return em.createQuery("select o from Order o " +
                         "join fetch o.member " +
-                        "join fetch o.delivery",
-                Order.class).getResultList();
+                        "join fetch o.delivery", Order.class)
+                .getResultList();
     }
 }
