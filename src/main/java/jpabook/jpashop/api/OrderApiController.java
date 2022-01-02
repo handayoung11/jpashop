@@ -42,6 +42,14 @@ public class OrderApiController {
         return new OrderDTOResult(orderDTOList);
     }
 
+    @GetMapping("/api/v3/orders")
+    public OrderDTOResult ordersV3() {
+        List<Order> orders = orderRepository.findAllWithItemAndDeliveryAndMember();
+        return new OrderDTOResult(orders.stream()
+                .map(OrderDTO::new)
+                .collect(Collectors.toList()));
+    }
+
     @Getter
     @AllArgsConstructor
     static class OrderDTOResult {
@@ -77,7 +85,6 @@ public class OrderApiController {
 
         OrderItemDTO(OrderItem orderItem) {
             itemName = orderItem.getItem().getName();
-            ;
             orderPrice = orderItem.getOrderPrice();
             count = orderItem.getCount();
         }
