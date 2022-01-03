@@ -1,6 +1,6 @@
-package jpabook.jpashop.repository.order.query;
+package jpabook.jpashop.repository.order.simplequery;
 
-import jpabook.jpashop.dto.api.SimpleOrderQueryDTO;
+import jpabook.jpashop.dto.api.order.simplequery.SimpleOrderQueryDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class OrderQueryRepository {
+public class OrderSimpleQueryRepository {
     private final EntityManager em;
 
     public List<SimpleOrderQueryDTO> findSimpleOrderQueryDTOList() {

@@ -1,4 +1,4 @@
-package jpabook.jpashop.dto.api;
+package jpabook.jpashop.dto.api.order.simplequery;
 
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.OrderStatus;
