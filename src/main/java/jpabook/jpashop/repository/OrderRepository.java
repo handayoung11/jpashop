@@ -50,10 +50,20 @@ public class OrderRepository {
         return query.getResultList();
     }
 
-    public List<Order> findAllWithMemberAndDelivery() {
+    private TypedQuery<Order> findAllWithMemberAndDeliveryQuery() {
         return em.createQuery("select o from Order o " +
-                        "join fetch o.member " +
-                        "join fetch o.delivery", Order.class)
+                "join fetch o.member " +
+                "join fetch o.delivery", Order.class);
+    }
+
+    public List<Order> findAllWithMemberAndDelivery() {
+        return findAllWithMemberAndDeliveryQuery().getResultList();
+    }
+
+    public List<Order> findAllWithMemberAndDelivery(int offset, int limit) {
+        return findAllWithMemberAndDeliveryQuery()
+                .setFirstResult(offset)
+                .setMaxResults(limit)
                 .getResultList();
     }
 

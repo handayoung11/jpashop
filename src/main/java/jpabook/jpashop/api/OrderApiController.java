@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -45,6 +46,15 @@ public class OrderApiController {
     @GetMapping("/api/v3/orders")
     public OrderDTOResult ordersV3() {
         List<Order> orders = orderRepository.findAllWithItemAndDeliveryAndMember();
+        return new OrderDTOResult(orders.stream()
+                .map(OrderDTO::new)
+                .collect(Collectors.toList()));
+    }
+
+    @GetMapping("/api/v3.1/orders")
+    public OrderDTOResult ordersV3Page(@RequestParam(defaultValue = "0") int offset,
+                                       @RequestParam(defaultValue = "100") int limit) {
+        List<Order> orders = orderRepository.findAllWithMemberAndDelivery(offset, limit);
         return new OrderDTOResult(orders.stream()
                 .map(OrderDTO::new)
                 .collect(Collectors.toList()));
