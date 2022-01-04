@@ -64,7 +64,7 @@ public class OrderApiController {
 
     @GetMapping("/api/v4/orders")
     public OrderDTOResult ordersV4() {
-        return new OrderDTOResult(orderQueryRepository.findSimpleOrderQueryDTOList());
+        return new OrderDTOResult(orderQueryRepository.findOrderQueryDTOList());
     }
 
     @Getter

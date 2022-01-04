@@ -13,8 +13,8 @@
     public class OrderQueryRepository {
         private final EntityManager em;
 
-        public List<OrderQueryDTO> findSimpleOrderQueryDTOList() {
-            List<OrderQueryDTO> result = findOrderAndMemberAndDelivery();
+        public List<OrderQueryDTO> findOrderQueryDTOList() {
+            List<OrderQueryDTO> result = findOrdersWithMemberAndDelivery();
             for (OrderQueryDTO o : result) {
                 List<OrderItemQueryDTO> orderItems = findOrderItems(o.getOrderId());
                 o.setOrderItems(orderItems);
@@ -31,7 +31,7 @@
                     .getResultList();
         }
 
-        private List<OrderQueryDTO> findOrderAndMemberAndDelivery() {
+        private List<OrderQueryDTO> findOrdersWithMemberAndDelivery() {
             return em.createQuery("select new jpabook.jpashop.dto.api.order.query.OrderQueryDTO(o.id, m.name, d.address, o.status, o.orderDate) " +
                             "from Order o " +
                             "join o.member m " +
