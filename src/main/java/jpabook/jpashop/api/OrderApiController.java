@@ -67,6 +67,11 @@ public class OrderApiController {
         return new OrderDTOResult(orderQueryRepository.findOrderQueryDTOList());
     }
 
+    @GetMapping("/api/v5/orders")
+    public OrderDTOResult ordersV5() {
+        return new OrderDTOResult(orderQueryRepository.findOrderQueryDTOListUsingIn());
+    }
+
     @Getter
     @AllArgsConstructor
     static class OrderDTOResult<T> {

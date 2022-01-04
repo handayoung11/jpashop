@@ -7,6 +7,8 @@
 
     import javax.persistence.EntityManager;
     import java.util.List;
+    import java.util.Map;
+    import java.util.stream.Collectors;
 
     @Repository
     @RequiredArgsConstructor
@@ -20,6 +22,31 @@
                 o.setOrderItems(orderItems);
             }
             return result;
+        }
+
+        public List<OrderQueryDTO> findOrderQueryDTOListUsingIn() {
+            List<OrderQueryDTO> result = findOrdersWithMemberAndDelivery();
+            List<Long> orderIds = getOrderIds(result);
+            Map<Long, List<OrderItemQueryDTO>> collect = getOrderItemQueryDTOMap(orderIds);
+            result.forEach(o -> o.setOrderItems(collect.get(o.getOrderId())));
+            return result;
+        }
+
+        private List<Long> getOrderIds(List<OrderQueryDTO> result) {
+            return result.stream()
+                    .map(OrderQueryDTO::getOrderId)
+                    .collect(Collectors.toList());
+        }
+
+        private Map<Long, List<OrderItemQueryDTO>> getOrderItemQueryDTOMap(List<Long> orderIds) {
+            List<OrderItemQueryDTO> orderItemQueryDTO =
+                    em.createQuery("select new jpabook.jpashop.dto.api.order.query.OrderItemQueryDTO(oi.order.id, i.name, oi.orderPrice, oi.count) " +
+                                    "from OrderItem oi " +
+                                    "join oi.item i " +
+                                    "where oi.order.id in (:orderIds)", OrderItemQueryDTO.class)
+                            .setParameter("orderIds", orderIds)
+                            .getResultList();
+            return orderItemQueryDTO.stream().collect(Collectors.groupingBy(OrderItemQueryDTO::getOrderId));
         }
 
         private List<OrderItemQueryDTO> findOrderItems(Long orderId) {
