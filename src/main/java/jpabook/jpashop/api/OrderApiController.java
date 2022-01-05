@@ -4,6 +4,9 @@ import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
+import jpabook.jpashop.dto.api.order.query.OrderFlatDTO;
+import jpabook.jpashop.dto.api.order.query.OrderItemQueryDTO;
+import jpabook.jpashop.dto.api.order.query.OrderQueryDTO;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,6 +74,22 @@ public class OrderApiController {
     @GetMapping("/api/v5/orders")
     public OrderDTOResult ordersV5() {
         return new OrderDTOResult(orderQueryRepository.findOrderQueryDTOListUsingIn());
+    }
+
+    @GetMapping("/api/v6/orders")
+    public OrderDTOResult ordersV6() {
+        List<OrderQueryDTO> result = orderQueryRepository.findOrderFlatDTOList().stream()
+                .collect(Collectors.groupingBy(OrderFlatDTO::getOrderId))
+                .entrySet().stream()
+                .map(o -> {
+                    List<OrderFlatDTO> list = o.getValue();
+                    OrderFlatDTO flatDTO = list.get(0);
+                    OrderQueryDTO queryDTO = new OrderQueryDTO(flatDTO.getOrderId(), flatDTO.getName(), flatDTO.getAddress(), flatDTO.getOrderStatus(), flatDTO.getOrderDate());
+                    queryDTO.setOrderItems(new ArrayList<>());
+                    list.forEach(item -> queryDTO.getOrderItems().add(new OrderItemQueryDTO(item.getOrderId(), item.getItemName(), item.getOrderPrice(), item.getCount())));
+                    return queryDTO;
+                }).collect(Collectors.toList());
+        return new OrderDTOResult(result);
     }
 
     @Getter

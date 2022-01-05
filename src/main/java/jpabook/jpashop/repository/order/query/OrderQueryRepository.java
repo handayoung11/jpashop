@@ -1,5 +1,6 @@
 package jpabook.jpashop.repository.order.query;
 
+import jpabook.jpashop.dto.api.order.query.OrderFlatDTO;
 import jpabook.jpashop.dto.api.order.query.OrderItemQueryDTO;
 import jpabook.jpashop.dto.api.order.query.OrderQueryDTO;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,17 @@ public class OrderQueryRepository {
         Map<Long, List<OrderItemQueryDTO>> collect = getOrderItemQueryDTOMap(orderIds);
         result.forEach(o -> o.setOrderItems(collect.get(o.getOrderId())));
         return result;
+    }
+
+    public List<OrderFlatDTO> findOrderFlatDTOList() {
+        return em.createQuery("select new jpabook.jpashop.dto.api.order.query.OrderFlatDTO(" +
+                        "o.id, m.name, o.status, o.orderDate, d.address, i.name, oi.orderPrice, oi.count) " +
+                "from Order o " +
+                "join o.member m " +
+                "join o.delivery d " +
+                "join o.orderItems oi " +
+                "join oi.item i", OrderFlatDTO.class)
+                .getResultList();
     }
 
     private List<Long> getOrderIds(List<OrderQueryDTO> result) {
