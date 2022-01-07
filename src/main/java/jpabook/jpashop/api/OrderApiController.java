@@ -10,6 +10,7 @@ import jpabook.jpashop.dto.api.order.query.OrderQueryDTO;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
+import jpabook.jpashop.service.query.OrderQueryService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class OrderApiController {
 
     private final OrderRepository orderRepository;
     private final OrderQueryRepository orderQueryRepository;
+    private final OrderQueryService orderQueryService;
 
     @GetMapping("/api/v1/orders")
     public List<Order> ordersV1() {
@@ -40,9 +42,10 @@ public class OrderApiController {
         return all;
     }
 
+    // OSIV OFF에서도 동작
     @GetMapping("/api/v2/orders")
     public OrderDTOResult ordersV2() {
-        List<Order> orders = orderRepository.findAllByOrderSearch(new OrderSearch());
+        List<Order> orders = orderQueryService.findAllWithLazyLoadMemAndAddAndOrI();
         List<OrderDTO> orderDTOList = orders.stream()
                 .map(OrderDTO::new)
                 .collect(Collectors.toList());
