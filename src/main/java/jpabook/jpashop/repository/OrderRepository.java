@@ -1,7 +1,9 @@
 package jpabook.jpashop.repository;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jpabook.jpashop.domain.Order;
-import lombok.RequiredArgsConstructor;
+import jpabook.jpashop.domain.OrderStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -11,10 +13,18 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jpabook.jpashop.domain.QMember.member;
+import static jpabook.jpashop.domain.QOrder.order;
+
 @Repository
-@RequiredArgsConstructor
 public class OrderRepository {
     private final EntityManager em;
+    private final JPAQueryFactory query;
+
+    public OrderRepository(EntityManager em) {
+        this.em = em;
+        query = new JPAQueryFactory(em);
+    }
 
     public Long save(Order order) {
         em.persist(order);
@@ -23,6 +33,27 @@ public class OrderRepository {
 
     public Order findOne(Long id) {
         return em.find(Order.class, id);
+    }
+
+    //QueryDSL을 이용해 검색기능 작성
+    public List<Order> findAllByOrderSearchDSL(OrderSearch orderSearch) {
+        return query.select(order)
+                .from(order)
+                .join(order.member, member)
+                .where(statusEq(orderSearch.getOrderStatus()),
+                        nameLike(orderSearch.getMemberName()))
+                .limit(1000)
+                .fetch();
+    }
+
+    private BooleanExpression nameLike(String name) {
+        if(!StringUtils.hasText(name)) return null;
+        return member.name.contains(name);
+    }
+
+    public BooleanExpression statusEq(OrderStatus status) {
+        if(status == null) return null;
+        return order.status.eq(status);
     }
 
     public List<Order> findAllByOrderSearch(OrderSearch orderSearch) {
